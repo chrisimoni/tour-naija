@@ -1,50 +1,50 @@
 /* eslint-disable */
 
-const locations = JSON.parse(document.getElementById('map').dataset.locations);
+export const displayMap = locations => {
+  mapboxgl.accessToken =
+    'pk.eyJ1IjoiY2hyaXNyZWFsIiwiYSI6ImNrNXUybDA4NTBxenczbmxvOWI2OXhlbWQifQ.ts5sydXJ3U5zoc0JR5AysQ';
+  var map = new mapboxgl.Map({
+    container: 'map',
+    style: 'mapbox://styles/chrisreal/ck63n4c270oof1im9fmilt5v2',
+    scrollZoom: false
+    //Lagos center: [3.406448, 6.465422],
+    // center: [-118.113491, 34.111745],
+    // zoom: 10,
+    // interactive: false
+  });
 
-mapboxgl.accessToken =
-  'pk.eyJ1IjoiY2hyaXNyZWFsIiwiYSI6ImNrNXUybDA4NTBxenczbmxvOWI2OXhlbWQifQ.ts5sydXJ3U5zoc0JR5AysQ';
-var map = new mapboxgl.Map({
-  container: 'map',
-  style: 'mapbox://styles/chrisreal/ck63n4c270oof1im9fmilt5v2',
-  scrollZoom: false
-  //Lagos center: [3.406448, 6.465422],
-  // center: [-118.113491, 34.111745],
-  // zoom: 10,
-  // interactive: false
-});
+  const bounds = new mapboxgl.LngLatBounds();
 
-const bounds = new mapboxgl.LngLatBounds();
+  locations.forEach(loc => {
+    //Create marker
+    const el = document.createElement('div');
+    el.className = 'marker';
 
-locations.forEach(loc => {
-  //Create marker
-  const el = document.createElement('div');
-  el.className = 'marker';
+    //Add marker
+    new mapboxgl.Marker({
+      element: el,
+      anchor: 'bottom'
+    })
+      .setLngLat(loc.coordinates)
+      .addTo(map);
 
-  //Add marker
-  new mapboxgl.Marker({
-    element: el,
-    anchor: 'bottom'
-  })
-    .setLngLat(loc.coordinates)
-    .addTo(map);
+    //Add Popup
+    new mapboxgl.Popup({
+      offset: 30
+    })
+      .setLngLat(loc.coordinates)
+      .setHTML(`<p>Day ${loc.day}: ${loc.description}</p>`)
+      .addTo(map);
+    //Extend map bounds to include current location
+    bounds.extend(loc.coordinates);
+  });
 
-  //Add Popup
-  new mapboxgl.Popup({
-    offset: 30
-  })
-    .setLngLat(loc.coordinates)
-    .setHTML(`<p>Day ${loc.day}: ${loc.description}</p>`)
-    .addTo(map);
-  //Extend map bounds to include current location
-  bounds.extend(loc.coordinates);
-});
-
-map.fitBounds(bounds, {
-  padding: {
-    top: 200,
-    bottom: 150,
-    left: 100,
-    right: 100
-  }
-});
+  map.fitBounds(bounds, {
+    padding: {
+      top: 200,
+      bottom: 150,
+      left: 100,
+      right: 100
+    }
+  });
+};

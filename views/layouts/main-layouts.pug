@@ -16,13 +16,14 @@ html
       .header__logo
         img(src='/img/logo-white.png' alt='tourNaija logo')
       nav.nav.nav--user
-        //- a.nav__el(href='#') My bookings
-        //- a.nav__el(href='#')
-        //-   img.nav__user-img(src='img/user.jpg' alt='User photo')
-        //-   span Chris
-
-        a.nav__el(href='/login') Log in
-        a.nav__el.nav__el--cta(href='#') Sign up
+        if user
+          a.nav__el.nav__el--logout(href='#') Log out
+          a.nav__el(href='#')
+          img.nav__user-img(src=`/img/users/${user.photo}` alt=`Photo of ${user.name}`)
+          span= user.name.split(' ')[0]
+        else
+          a.nav__el(href='/login') Log in
+          a.nav__el.nav__el--cta(href='#') Sign up
 
     //SECTION
     block content
@@ -40,4 +41,7 @@ html
 
       p.footer__copyright &copy; by Chris Imoni. All rights reserved.
 
-    script(src='/js/mapbox.js')
+    //- script(src='/js/mapbox.js')
+    //- script(src='https://cdnjs.cloudflare.com/ajax/libs/axios/0.19.2/axios.min.js')
+    //- script(src='/js/login.js')
+    script(src='/js/bundle.js')
