@@ -3,7 +3,7 @@ const userController = require('./../controllers/userController');
 const authController = require('./../controllers/authController');
 
 //ROUTES
-const router = express.Router();
+const router = express.Router({ dest: 'public/img/users' });
 
 router.post('/signup', authController.signup);
 router.post('/login', authController.login);
@@ -17,7 +17,11 @@ router.use(authController.protect);
 router.patch('/updatepassword', authController.updatePassword);
 
 router.get('/me', userController.getMe, userController.getUser);
-router.patch('/updateme', userController.updateMe);
+router.patch(
+  '/updateme',
+  userController.uploadUserPhoto,
+  userController.updateMe
+);
 router.delete('/deleteme', userController.deleteMe);
 
 //Restrict the routes after this to admin
