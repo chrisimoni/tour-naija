@@ -1,4 +1,6 @@
 const nodemailer = require('nodemailer');
+//const sendgridTransport = require('nodemailer-sendgrid-transport');
+const mg = require('nodemailer-mailgun-transport');
 const pug = require('pug');
 const htmlToText = require('html-to-text');
 
@@ -13,13 +15,21 @@ module.exports = class Email {
   newTransport() {
     if (process.env.NODE_ENV === 'production') {
       //Sendgrid
-      return nodemailer.createTransport({
-        service: 'SendGrid',
-        auth: {
-          user: process.env.SENDGRID_USERNAME,
-          pass: process.env.SENDGRID_PASSWORD
-        }
-      });
+      return nodemailer.createTransport(
+        // sendgridTransport({
+        //   //service: 'SendGrid',
+        //   auth: {
+        //     user: process.env.SENDGRID_USERNAME,
+        //     pass: process.env.SENDGRID_PASSWORD
+        //   }
+        // })
+        mg({
+          auth: {
+            api_key: 'key-41ca863fdcdb03654bd95c2ad6659c06',
+            domain: 'sandboxae0051eccc4b4f798f49dce35899c343.mailgun.org'
+          }
+        })
+      );
     }
 
     return nodemailer.createTransport({
