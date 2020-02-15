@@ -13,19 +13,16 @@ const singToken = id => {
   });
 };
 
-const createSendToken = (user, statusCode, res) => {
+const createSendToken = (user, statusCode, req, res) => {
   const token = singToken(user._id);
 
-  const cookieOptions = {
+  res.cookie('jwt', token, {
     expires: new Date(
       Date.now() + process.env.JWT_COOKIE_EXPIRES_IN * 24 * 60 * 60 * 1000
     ),
-    httpOnly: true
-  };
-
-  if (process.env.NODE_ENV === 'production') cookieOptions.secure = true;
-
-  res.cookie('jwt', token, cookieOptions);
+    httpOnly: true,
+    secure: req.secure || req.headers['x-forwarded-proto'] === 'https'
+  });
 
   //Remove password from output
   user.password = undefined;
@@ -51,7 +48,7 @@ exports.signup = catchAsyn(async (req, res, next) => {
   await new Email(newUser, url).sendWelcome();
 
   //Create token with payload and secret
-  createSendToken(newUser, 201, res);
+  createSendToken(newUser, 201, req, res);
 });
 
 exports.login = catchAsyn(async (req, res, next) => {
@@ -73,7 +70,7 @@ exports.login = catchAsyn(async (req, res, next) => {
   }
 
   //Send token to the client
-  createSendToken(user, 200, res);
+  createSendToken(user, 200, req, res);
 });
 
 exports.logout = (req, res) => {
@@ -168,7 +165,7 @@ exports.restrictTo = (...roles) => {
   //Return the middleware function
   return (req, res, next) => {
     //roles ['admin', 'lead-guide']
-    console.log('User ROle', req.user.role);
+    console.log('User Role', req.user.role);
     if (!roles.includes(req.user.role)) {
       return next(
         new AppError('You do not have permission to perform this action', 403)
@@ -242,7 +239,7 @@ exports.resetPassword = catchAsyn(async (req, res, next) => {
   //Update changedPasswordAt property for the user
 
   //Log the user and send JWT
-  createSendToken(user, 200, res);
+  createSendToken(user, 200, req, res);
 });
 
 exports.updatePassword = catchAsyn(async (req, res, next) => {
@@ -260,5 +257,5 @@ exports.updatePassword = catchAsyn(async (req, res, next) => {
   await user.save();
 
   //Log user and send JWT
-  createSendToken(user, 200, res);
+  createSendToken(user, 200, req, res);
 });
