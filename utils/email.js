@@ -25,8 +25,8 @@ module.exports = class Email {
         // })
         mg({
           auth: {
-            api_key: 'key-41ca863fdcdb03654bd95c2ad6659c06',
-            domain: 'sandboxae0051eccc4b4f798f49dce35899c343.mailgun.org'
+            api_key: process.env.MAILGUN_API_KEY,
+            domain: process.env.MAILGUN_DOMAIN
           }
         })
       );
