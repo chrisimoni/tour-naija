@@ -168,6 +168,7 @@ exports.restrictTo = (...roles) => {
   //Return the middleware function
   return (req, res, next) => {
     //roles ['admin', 'lead-guide']
+    console.log('User ROle', req.user.role);
     if (!roles.includes(req.user.role)) {
       return next(
         new AppError('You do not have permission to perform this action', 403)
